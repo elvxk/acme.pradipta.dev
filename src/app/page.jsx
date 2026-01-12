@@ -73,6 +73,7 @@ export default function Home() {
         method: "POST",
       });
       const data = await res.json();
+      console.log(data)
       setIssueResult(data);
     } catch (err) {
       setIssueResult({ error: err.message });
@@ -115,16 +116,19 @@ export default function Home() {
                 </div>
                 {challengeResult && (
                   challengeResult.error ? (
-                    <div className="p-4 bg-red-100 text-red-800 rounded">{challengeResult.error}</div>
+                    <>
+                      {challengeResult.message && <div className="p-4 bg-red-100 text-red-800 rounded">{challengeResult.message}</div>}
+                      {challengeResult.error && <div className="p-4 bg-red-100 text-red-800 rounded">{challengeResult.error}</div>}
+                    </>
                   ) : (
                     <div className="p-4 bg-green-100 text-green-800 rounded space-y-2">
                       <p className="items-center self-center flex w-full flex-col justify-center"><strong>Success</strong> Please Save Request ID bellow for Issue porcess</p>
-                      <p className="items-center self-center flex w-full flex-col justify-center border p-2 bg-white mb-4"> {challengeResult.id}</p>
-                      {challengeResult.dns && challengeResult.dns.length > 0 && (
+                      <p className="items-center self-center flex w-full flex-col justify-center border p-2 bg-white mb-4"> {challengeResult.data.id}</p>
+                      {challengeResult.data.dns && challengeResult.data.dns.length > 0 && (
                         <div>
                           <p><strong>DNS Records:</strong></p>
                           <div className="border border-gray-300 rounded overflow-hidden">
-                            {challengeResult.dns.map((record, idx) => (
+                            {challengeResult.data.dns.map((record, idx) => (
                               <div
                                 key={idx}
                                 className={`p-2 border-b last:border-b-0 ${idx % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
@@ -177,8 +181,9 @@ export default function Home() {
           issueResult.status === "error" || issueResult.error ? (
             <Card className='bg-white'>
               <CardContent>
-                <div className="p-4 bg-red-100 text-red-800 rounded">
-                  <strong>Error:</strong> {issueResult.message || issueResult.error}
+                <div className="p-4 bg-red-100 text-red-800 rounded flex flex-col">
+                  {issueResult.error && <p><strong>Error:</strong> {issueResult.error}</p>}
+                  {issueResult.message && <p><strong>Message:</strong> {issueResult.message}</p>}
                 </div>
               </CardContent>
             </Card>
@@ -195,12 +200,12 @@ export default function Home() {
                   {/* Domains */}
                   <div className="bg-green-50 p-2 rounded flex flex-col">
                     <span className="font-semibold">Domains:</span>
-                    <span>{issueResult.domains.join(", ")}</span>
+                    <span>{issueResult.data.domains.join(", ")}</span>
                   </div>
 
                   {/* Pisahkan Certificate */}
                   {(() => {
-                    const certs = issueResult.certificate
+                    const certs = issueResult.data.certificate
                       .split(/-----END CERTIFICATE-----\n?/g)
                       .map(c => c.trim())
                       .filter(c => c)
@@ -231,7 +236,7 @@ export default function Home() {
                   {/* Private Key */}
                   <div className="bg-green-50 p-2 rounded flex flex-col">
                     <span className="font-semibold">Private Key:</span>
-                    <pre className="text-xs overflow-x-auto mt-1 bg-white p-2 border-2">{issueResult.privateKey}</pre>
+                    <pre className="text-xs overflow-x-auto mt-1 bg-white p-2 border-2">{issueResult.data.privateKey}</pre>
                   </div>
                 </div>
               </CardContent>
