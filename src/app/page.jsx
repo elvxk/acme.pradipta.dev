@@ -30,7 +30,8 @@ export default function Home() {
     if (domainList.length === 0) return { error: "Please enter at least 1 domain" };
 
     // Regex valid domain sederhana, bisa support subdomain
-    const domainRegex = /^(?!-)(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,}$/;
+    // const domainRegex = /^(?!-)(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,}$/;
+    const domainRegex = /^(?:\*\.)?(?!-)(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,}$/;
     const invalidDomains = domainList.filter(d => !domainRegex.test(d));
     if (invalidDomains.length > 0) return { error: `Invalid domain(s): ${invalidDomains.join(", ")}` };
 
